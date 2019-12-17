@@ -34,29 +34,26 @@ class GridTest {
 	@Test
 	void insertMowerInEmptyGridTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "",grid));		
+		grid.placeMower(0, 0,new Mower( "N", ""));		
 	}
 	
 	@Test
 	void insertTwoMowersTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "",grid));	
-		grid.placeMower(0, 1,new Mower( "N", "",grid));				
+		grid.placeMower(0, 0,new Mower( "N", ""));	
+		grid.placeMower(0, 1,new Mower( "N", ""));				
 	}
 	
 	@Test
 	void InsertTwoMowersInSamePositionTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "",grid));	
+		grid.placeMower(0, 0,new Mower( "N", ""));	
 		try {
-			grid.placeMower(0, 0,new Mower( "N", "",grid));	
+			grid.placeMower(0, 0,new Mower( "N", ""));	
 			fail("Cannot place two mowers in the same position");
 		}catch(PositionTakenException e) {
 			
-		}
-					
+		}					
 	}
-	
-
-
+		
 }

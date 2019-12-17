@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
 import main.exception.mower.MowerException;
+import main.exception.mower.NullGridException;
 import main.model.orientation.EastOrientation;
 import main.model.orientation.NorthOrientation;
 import main.model.orientation.Orientable;
@@ -25,17 +26,22 @@ public class Mower {
 	private Grid grid;
 	
 
-	public Mower(String orientation, String commands, Grid grid) throws MowerException{
-		this.grid = grid;
+	public Mower(String orientation, String commands) throws MowerException{
+		this.grid = null;
 		this.currentCommand = -1;
 		parseOrientation(orientation);
 		parseCommands(commands);		
 	}
 	
+	public void setGrid(Grid grid) throws MowerException {
+		if(this.grid != null)
+			throw new MowerException();		
+		this.grid = grid;		
+	}
+	
 	private void parseCommands(String commands) throws InvalidCommandException{
 		this.commands = new ArrayList<Command>();
 		for(int i = 0; i < commands.length(); i++) {
-			Command command = null;
 			if(commands.charAt(i) == 'F') {
 				this.commands.add(Command.FORWARD);
 			}else if(commands.charAt(i) == 'L') {
@@ -67,6 +73,10 @@ public class Mower {
 	public Orientable getOrientation() {
 		return orientation;
 	}
+	
+	public Grid getGrid() {
+		return this.grid;
+	}
 
 	private void rotateRight() {
 		this.orientation = this.orientation.rotateRight();		
@@ -76,11 +86,21 @@ public class Mower {
 		this.orientation = this.orientation.rotateLeft();		
 	}
 	
-	private void moveForward() {
-//		this.grid.moveForward(this);
+	private void moveForward() throws MowerException{
+		if(this.grid == null)
+			throw new NullGridException();
+		if(this.getOrientation().getIdentifier() == "N") {
+			this.grid.moveForward(this,(p) -> new Position(p.getX(),p.getY() + 1));
+		}else if(this.getOrientation().getIdentifier() == "E") {
+			this.grid.moveForward(this,(p) -> new Position(p.getX() + 1,p.getY()));
+		}else if(this.getOrientation().getIdentifier() == "S") {
+			this.grid.moveForward(this,(p) -> new Position(p.getX(),p.getY() - 1));
+		}else if(this.getOrientation().getIdentifier() == "W") {
+			this.grid.moveForward(this,(p) -> new Position(p.getX() - 1,p.getY()));
+		}			
 	}
 	
-	public void executeOne() throws InvalidCommandException {
+	public void executeOne() throws MowerException {
 		if(this.currentCommand == -1)
 			throw new InvalidCommandException();
 		if(this.commands.get(currentCommand) == Command.LEFT) {
@@ -93,8 +113,18 @@ public class Mower {
 			throw new InvalidCommandException();
 		}
 		this.currentCommand++;
-		if(currentCommand == commands.size())
+		if(currentCommand == commands.size()) {
 			currentCommand = -1;
+		if(this.grid == null)
+			throw new NullGridException();
+			
+			this.grid.printMower(this);
+		}
+	}
+	
+	public void executeAll() throws MowerException {
+		while(this.currentCommand != -1)
+			this.executeOne();
 	}
 
 }
