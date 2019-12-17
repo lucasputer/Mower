@@ -7,13 +7,17 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.PriorityQueue;
 
 import main.exception.grid.GridException;
 import main.exception.grid.NegativeGridException;
 import main.exception.grid.PositionTakenException;
 import main.exception.mower.MowerException;
+import main.model.Command;
 import main.model.Grid;
 import main.model.Mower;
+import main.model.orientation.NorthOrientation;
+import main.model.orientation.SouthOrientation;
 
 
 class GridTest {
@@ -38,22 +42,22 @@ class GridTest {
 	@Test
 	void insertMowerInEmptyGridTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", ""));		
+		grid.placeMower(0, 0, new Mower(new NorthOrientation(), new PriorityQueue<Command>()));		
 	}
 	
 	@Test
 	void insertTwoMowersTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", ""));	
-		grid.placeMower(0, 1,new Mower( "N", ""));				
+		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
+		grid.placeMower(0, 1,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));				
 	}
 	
 	@Test
 	void InsertTwoMowersInSamePositionTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", ""));	
+		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
 		try {
-			grid.placeMower(0, 0,new Mower( "N", ""));	
+			grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
 			fail("Cannot place two mowers in the same position");
 		}catch(PositionTakenException e) {
 			
@@ -71,8 +75,7 @@ class GridTest {
 	void printOneMovementMowerTest() throws GridException, MowerException{		
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
-		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "L"));
+		Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
 		grid.executeOne();
 		assertEquals("0 0 W\n",outContent.toString());
 	}
@@ -82,7 +85,10 @@ class GridTest {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "LL"));
+		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		q.add(Command.LEFT);
+		q.add(Command.LEFT);
+		grid.placeMower(0, 0,new Mower(new NorthOrientation(), q));
 		grid.executeOne();
 		assertEquals("",outContent.toString());
 	}
@@ -91,9 +97,12 @@ class GridTest {
 	void printTwoMowersTest() throws GridException, MowerException{		
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
-		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "L"));
-		grid.placeMower(4, 4,new Mower( "S", "F"));
+	    Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
+	    
+		PriorityQueue<Command> q2 = new PriorityQueue<Command>();
+		q2.add(Command.FORWARD);
+		grid.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
+		
 		grid.executeOne();
 		grid.executeOne();
 		assertEquals("0 0 W\n4 3 S\n",outContent.toString());
@@ -103,17 +112,24 @@ class GridTest {
 	void executeAllTest() throws GridException, MowerException{		
 		ByteArrayOutputStream outContent1 = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent1));
-		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "L"));
-		grid.placeMower(4, 4,new Mower( "S", "F"));
+	    Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
+	    
+		PriorityQueue<Command> q2 = new PriorityQueue<Command>();
+		q2.add(Command.FORWARD);
+		grid.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
+		
 		grid.executeOne();
 		grid.executeOne();
 		
 		ByteArrayOutputStream outContent2 = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent2));
-		Grid grid2 = new Grid(4,4);
-		grid2.placeMower(0, 0,new Mower( "N", "L"));
-		grid2.placeMower(4, 4,new Mower( "S", "F"));
+	    
+		Grid grid2 = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
+		
+		q2 = new PriorityQueue<Command>();
+		q2.add(Command.FORWARD);
+		grid2.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
+
 		grid2.executeAll();	
 		assertEquals(outContent2.toString(),outContent1.toString());
 	}
@@ -123,9 +139,12 @@ class GridTest {
 	void mowerMovesForwardWithBlockingMowerTest() throws GridException, MowerException{
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
-		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "F"));
-		grid.placeMower(0, 1,new Mower( "S", "R"));
+		Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandForward();
+		
+		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		q.add(Command.RIGHT);
+		grid.placeMower(0, 1,new Mower( new SouthOrientation(), q));
+
 		grid.executeAll();
 		assertEquals("0 0 N\n0 1 W\n",outContent.toString());		
 	}
@@ -134,9 +153,12 @@ class GridTest {
 	void mowerMovesForwardWithBlockingMowerButNextOneMovesTest() throws GridException, MowerException{
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
-		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower( "N", "F"));
-		grid.placeMower(0, 1,new Mower( "N", "F"));
+		Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandForward();
+		
+		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		q.add(Command.FORWARD);
+		grid.placeMower(0, 1,new Mower( new NorthOrientation(), q));
+		
 		grid.executeAll();
 		assertEquals("0 0 N\n0 2 N\n",outContent.toString());		
 	}
@@ -146,7 +168,9 @@ class GridTest {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = new Grid(4,4);
-		grid.placeMower(4, 4,new Mower( "N", "F"));
+		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		q.add(Command.FORWARD);
+		grid.placeMower(4, 4,new Mower(new NorthOrientation(), q));
 		grid.executeAll();
 		assertEquals("4 4 N\n",outContent.toString());			
 	}		

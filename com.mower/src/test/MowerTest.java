@@ -2,13 +2,15 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.PriorityQueue;
+
 import org.junit.jupiter.api.Test;
 
 import main.exception.grid.GridException;
 import main.exception.mower.InvalidCommandException;
-import main.exception.mower.InvalidOrientationException;
 import main.exception.mower.MowerException;
 import main.exception.mower.NullGridException;
+import main.model.Command;
 import main.model.Mower;
 import main.model.orientation.EastOrientation;
 import main.model.orientation.NorthOrientation;
@@ -16,38 +18,10 @@ import main.model.orientation.SouthOrientation;
 import main.model.orientation.WestOrientation;
 
 class MowerTest {
-
-	@Test
-	void insertMowerWithInvalidOrientationTest() throws MowerException{
-		try {
-			@SuppressWarnings("unused")
-			Mower mower = new Mower("R", "");	
-			fail("No exception was thrown");
-		}catch(InvalidOrientationException e) {
-			
-		}	
-	}
-	
-	@Test
-	void insertMowerWithValidOrientationTest() throws MowerException{
-		Mower mower = new Mower("N", "");
-		assertEquals(mower.getOrientation().getIdentifier(),new NorthOrientation().getIdentifier());
-	}
-	
-	@Test
-	void insertMowerWithInvalidCommandTest() throws MowerException, GridException{
-		try {
-			@SuppressWarnings("unused")
-			Mower mower = new Mower("N", "T");	
-			fail("No exception was thrown");
-		}catch(InvalidCommandException e) {
-			
-		}					
-	}
 	
 	@Test
 	void rotateMowerRightTest() throws MowerException, GridException{
-		Mower mower = new Mower( "N", "RRRR");
+		Mower mower = TestInstances.getMowerWithFullTurn(Command.RIGHT);
 		assertEquals(mower.getOrientation().getIdentifier(),new NorthOrientation().getIdentifier());
 		mower.executeOne();
 		assertEquals(mower.getOrientation().getIdentifier(),new EastOrientation().getIdentifier());
@@ -62,7 +36,7 @@ class MowerTest {
 	
 	@Test
 	void rotateMowerLeftTest() throws MowerException, GridException{
-		Mower mower = new Mower("N", "LLLL");
+		Mower mower = TestInstances.getMowerWithFullTurn(Command.LEFT);
 		assertEquals(mower.getOrientation().getIdentifier(),new NorthOrientation().getIdentifier());
 		mower.executeOne();
 		assertEquals(mower.getOrientation().getIdentifier(),new WestOrientation().getIdentifier());
@@ -77,10 +51,10 @@ class MowerTest {
 	
 	@Test
 	void executeAllTest() throws MowerException, GridException{
-		Mower mower = new Mower("N", "LLL");
+		Mower mower = TestInstances.getMowerWithFullTurn(Command.RIGHT);
 		assertEquals(mower.getOrientation().getIdentifier(),new NorthOrientation().getIdentifier());
 		mower.executeAll();
-		assertEquals(mower.getOrientation().getIdentifier(),new EastOrientation().getIdentifier());
+		assertEquals(mower.getOrientation().getIdentifier(),new NorthOrientation().getIdentifier());
 	}
 	
 	
@@ -88,7 +62,9 @@ class MowerTest {
 	@Test
 	void moveForwardWithNoGridFailsTest() throws MowerException{
 		try {
-			Mower mower = new Mower("N", "F");
+			PriorityQueue<Command> q = new PriorityQueue<Command>();
+			q.add(Command.FORWARD);
+			Mower mower = new Mower(new NorthOrientation(), q);
 			mower.executeOne();	
 			fail("No exception was thrown");
 		}catch(NullGridException e) {
@@ -99,7 +75,7 @@ class MowerTest {
 	@Test
 	void executeOneWithNoCommandsFailsTest() throws MowerException{
 		try {
-			Mower mower = new Mower("N", "");
+			Mower mower = new Mower(new NorthOrientation(), new PriorityQueue<Command>());
 			mower.executeOne();	
 			fail("No exception was thrown");
 		}catch(InvalidCommandException e) {

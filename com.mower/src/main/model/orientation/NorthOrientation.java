@@ -1,6 +1,6 @@
 package main.model.orientation;
 
-public class NorthOrientation implements Orientable {
+ public class NorthOrientation implements Orientable {
 	
 	@Override
 	public String getIdentifier(){
