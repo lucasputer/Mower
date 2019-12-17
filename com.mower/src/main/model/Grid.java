@@ -17,7 +17,7 @@ public class Grid {
 	private HashMap<Mower,Position> mowerPositions;
 	private LinkedList<Mower> mowers;
 	private Mower currentMower;
-	private boolean[][] positions;
+	private HashMap<Position,Boolean> positions;
 	
 	public Grid(int x, int y) throws GridException{
 		if(x < 0 || y < 0) {
@@ -27,7 +27,7 @@ public class Grid {
 		this.mowerPositions = new HashMap<Mower,Position>();
 		this.mowers = new LinkedList<Mower>();
 		this.currentMower = null;
-		this.positions = new boolean[x+1][y+1];
+		this.positions = new HashMap<Position, Boolean>();
 	}
 
 	public Position getLimit() {
@@ -40,9 +40,9 @@ public class Grid {
 		
 		Position position = new Position(mowerX,mowerY);
 		
-		if(positions[mowerX][mowerY] == true)
+		if(positions.containsKey(position) && positions.get(position))
 			throw new PositionTakenException();
-		positions[mowerX][mowerY] = true;
+		positions.put(position,true);
 		mowerPositions.put(mower,position);
 		mowers.add(mower);
 		
@@ -58,10 +58,10 @@ public class Grid {
 		Position wantedPosition = fn.apply(currentPosition);
 		if(wantedPosition.getX() >= 0 &&  wantedPosition.getY() >= 0 
 				&& wantedPosition.getX() <= gridLimit.getX() && wantedPosition.getY() <= gridLimit.getY() &&
-				positions[wantedPosition.getX()][wantedPosition.getY()] == false) {
-			positions[currentPosition.getX()][currentPosition.getY()] = false;
+				(!positions.containsKey(wantedPosition)|| !positions.get(wantedPosition))) {
+			positions.put(currentPosition,false);
 			mowerPositions.put(mower, wantedPosition);
-			positions[wantedPosition.getX()][wantedPosition.getY()] = true;
+			positions.put(wantedPosition,true);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class Grid {
 		result = prime * result + ((gridLimit == null) ? 0 : gridLimit.hashCode());
 		result = prime * result + ((mowerPositions == null) ? 0 : mowerPositions.hashCode());
 		result = prime * result + ((mowers == null) ? 0 : mowers.hashCode());
-		result = prime * result + Arrays.deepHashCode(positions);
+		result = prime * result + positions.hashCode();
 		return result;
 	}
 
@@ -132,7 +132,7 @@ public class Grid {
 				return false;
 		} else if (!mowers.equals(other.mowers))
 			return false;
-		if (!Arrays.deepEquals(positions, other.positions))
+		if (!positions.equals(other.positions))
 			return false;
 		return true;
 	}

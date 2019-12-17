@@ -1,6 +1,6 @@
 package main.model;
 
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import main.exception.mower.InvalidCommandException;
@@ -24,7 +24,7 @@ public class Mower {
 		this.commands = null;
 		this.currentCommand = this.commands.poll();	
 	}
-	public Mower(Orientable orientation, PriorityQueue<Command> commands) throws MowerException{
+	public Mower(Orientable orientation, LinkedList<Command> commands) throws MowerException{
 		this.grid = null;
 		this.currentCommand = null;
 		this.orientation = orientation;

@@ -1,7 +1,6 @@
 package main;
 
-import java.util.PriorityQueue;
-
+import java.util.LinkedList;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
 import main.model.Command;
@@ -14,21 +13,21 @@ import main.model.orientation.WestOrientation;
 public class InputParser {
 	
 	public static Orientable parseOrientation(String orientation) throws InvalidOrientationException{
-		if(orientation == "N") {
+		if(orientation.equals("N")) {
 			return new NorthOrientation();
-		}else if(orientation == "E") {
+		}else if(orientation.equals("E")) {
 			return new EastOrientation();
-		}else if(orientation == "W") {
+		}else if(orientation.equals("W")) {
 			return new WestOrientation();
-		}else if(orientation == "S") {
+		}else if(orientation.equals("S")) {
 			return new SouthOrientation();
 		}else {
 			throw new InvalidOrientationException();
 		}
 	}
 	
-	public static PriorityQueue<Command> parseCommands(String commands) throws InvalidCommandException{
-		PriorityQueue<Command> commandQueue = new PriorityQueue<Command>();
+	public static LinkedList<Command> parseCommands(String commands) throws InvalidCommandException{
+		LinkedList<Command> commandQueue = new LinkedList<Command>();
 		for(int i = 0; i < commands.length(); i++) {
 			if(commands.charAt(i) == 'F') {
 				commandQueue.add(Command.FORWARD);

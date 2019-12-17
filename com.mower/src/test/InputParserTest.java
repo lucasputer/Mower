@@ -1,8 +1,11 @@
 package test;
 
-import java.util.PriorityQueue;
-
+import java.util.LinkedList;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import main.InputParser;
@@ -11,6 +14,8 @@ import main.exception.mower.InvalidOrientationException;
 import main.model.Command;
 import main.model.orientation.NorthOrientation;
 
+@RunWith(Suite.class)
+@SuiteClasses({})
 class InputParserTest {
 
 	@Test
@@ -47,17 +52,21 @@ class InputParserTest {
 	
 	@Test
 	void validCommandTest() throws InvalidCommandException{
-		PriorityQueue<Command> q = InputParser.parseCommands("R");	
+		LinkedList<Command> q = InputParser.parseCommands("R");	
 		assertEquals(q.peek(),Command.RIGHT);
 		
 		q = InputParser.parseCommands("RRLLFF");
-		PriorityQueue<Command> q2 = new PriorityQueue<Command>();
+		LinkedList<Command> q2 = new LinkedList<Command>();
 		q2.add(Command.RIGHT);
 		q2.add(Command.RIGHT);
 		q2.add(Command.LEFT);
 		q2.add(Command.LEFT);
 		q2.add(Command.FORWARD);
 		q2.add(Command.FORWARD);		
+		
+		while(!q.isEmpty()) {
+			assertEquals(q.poll(), q2.poll());
+		}
 	}
 
 }

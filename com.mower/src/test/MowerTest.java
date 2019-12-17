@@ -2,9 +2,11 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.PriorityQueue;
-
+import java.util.LinkedList;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 import main.exception.grid.GridException;
 import main.exception.mower.InvalidCommandException;
@@ -17,6 +19,8 @@ import main.model.orientation.NorthOrientation;
 import main.model.orientation.SouthOrientation;
 import main.model.orientation.WestOrientation;
 
+@RunWith(Suite.class)
+@SuiteClasses({})
 class MowerTest {
 	
 	@Test
@@ -62,7 +66,7 @@ class MowerTest {
 	@Test
 	void moveForwardWithNoGridFailsTest() throws MowerException{
 		try {
-			PriorityQueue<Command> q = new PriorityQueue<Command>();
+			LinkedList<Command> q = new LinkedList<Command>();
 			q.add(Command.FORWARD);
 			Mower mower = new Mower(new NorthOrientation(), q);
 			mower.executeOne();	
@@ -75,7 +79,7 @@ class MowerTest {
 	@Test
 	void executeOneWithNoCommandsFailsTest() throws MowerException{
 		try {
-			Mower mower = new Mower(new NorthOrientation(), new PriorityQueue<Command>());
+			Mower mower = new Mower(new NorthOrientation(), new LinkedList<Command>());
 			mower.executeOne();	
 			fail("No exception was thrown");
 		}catch(InvalidCommandException e) {

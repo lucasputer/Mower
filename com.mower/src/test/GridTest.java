@@ -2,12 +2,16 @@ package test;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 
 import main.exception.grid.GridException;
 import main.exception.grid.NegativeGridException;
@@ -19,7 +23,8 @@ import main.model.Mower;
 import main.model.orientation.NorthOrientation;
 import main.model.orientation.SouthOrientation;
 
-
+@RunWith(Suite.class)
+@SuiteClasses({})
 class GridTest {
 	
 	@Test
@@ -42,22 +47,22 @@ class GridTest {
 	@Test
 	void insertMowerInEmptyGridTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0, new Mower(new NorthOrientation(), new PriorityQueue<Command>()));		
+		grid.placeMower(0, 0, new Mower(new NorthOrientation(), new LinkedList<Command>()));		
 	}
 	
 	@Test
 	void insertTwoMowersTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
-		grid.placeMower(0, 1,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));				
+		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new LinkedList<Command>()));	
+		grid.placeMower(0, 1,new Mower(new NorthOrientation(), new LinkedList<Command>()));				
 	}
 	
 	@Test
 	void InsertTwoMowersInSamePositionTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
+		grid.placeMower(0, 0,new Mower(new NorthOrientation(), new LinkedList<Command>()));	
 		try {
-			grid.placeMower(0, 0,new Mower(new NorthOrientation(), new PriorityQueue<Command>()));	
+			grid.placeMower(0, 0,new Mower(new NorthOrientation(), new LinkedList<Command>()));	
 			fail("Cannot place two mowers in the same position");
 		}catch(PositionTakenException e) {
 			
@@ -85,7 +90,7 @@ class GridTest {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = new Grid(4,4);
-		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		LinkedList<Command> q = new LinkedList<Command>();
 		q.add(Command.LEFT);
 		q.add(Command.LEFT);
 		grid.placeMower(0, 0,new Mower(new NorthOrientation(), q));
@@ -99,7 +104,7 @@ class GridTest {
 	    System.setOut(new PrintStream(outContent));
 	    Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
 	    
-		PriorityQueue<Command> q2 = new PriorityQueue<Command>();
+	    LinkedList<Command> q2 = new LinkedList<Command>();
 		q2.add(Command.FORWARD);
 		grid.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
 		
@@ -114,7 +119,7 @@ class GridTest {
 	    System.setOut(new PrintStream(outContent1));
 	    Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
 	    
-		PriorityQueue<Command> q2 = new PriorityQueue<Command>();
+	    LinkedList<Command> q2 = new LinkedList<Command>();
 		q2.add(Command.FORWARD);
 		grid.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
 		
@@ -126,7 +131,7 @@ class GridTest {
 	    
 		Grid grid2 = TestInstances.getStandardGridWithMowerFacingNorthAndCommandLeft();
 		
-		q2 = new PriorityQueue<Command>();
+		q2 = new LinkedList<Command>();
 		q2.add(Command.FORWARD);
 		grid2.placeMower(4, 4,new Mower( new SouthOrientation(), q2));
 
@@ -141,7 +146,7 @@ class GridTest {
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandForward();
 		
-		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		LinkedList<Command> q = new LinkedList<Command>();
 		q.add(Command.RIGHT);
 		grid.placeMower(0, 1,new Mower( new SouthOrientation(), q));
 
@@ -155,7 +160,7 @@ class GridTest {
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = TestInstances.getStandardGridWithMowerFacingNorthAndCommandForward();
 		
-		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		LinkedList<Command> q = new LinkedList<Command>();
 		q.add(Command.FORWARD);
 		grid.placeMower(0, 1,new Mower( new NorthOrientation(), q));
 		
@@ -168,7 +173,7 @@ class GridTest {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    System.setOut(new PrintStream(outContent));
 		Grid grid = new Grid(4,4);
-		PriorityQueue<Command> q = new PriorityQueue<Command>();
+		LinkedList<Command> q = new LinkedList<Command>();
 		q.add(Command.FORWARD);
 		grid.placeMower(4, 4,new Mower(new NorthOrientation(), q));
 		grid.executeAll();
