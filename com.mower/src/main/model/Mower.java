@@ -6,28 +6,16 @@ import java.util.Queue;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.MowerException;
 import main.exception.mower.NullGridException;
-import main.model.orientation.NorthOrientation;
-import main.model.orientation.Orientable;
 
 public class Mower {
 	
-	private Orientable orientation;
 	private Queue<Command> commands;
 	private Command currentCommand;
 	private Grid grid;
 	
-	
-	public Mower() {
+	public Mower(LinkedList<Command> commands) throws MowerException{
 		this.grid = null;
 		this.currentCommand = null;
-		this.orientation = new NorthOrientation();
-		this.commands = null;
-		this.currentCommand = this.commands.poll();	
-	}
-	public Mower(Orientable orientation, LinkedList<Command> commands) throws MowerException{
-		this.grid = null;
-		this.currentCommand = null;
-		this.orientation = orientation;
 		this.commands = commands;
 		this.currentCommand = this.commands.poll();		
 	}
@@ -37,35 +25,27 @@ public class Mower {
 			throw new MowerException();		
 		this.grid = grid;		
 	}
-
-	public Orientable getOrientation() {
-		return orientation;
-	}
 	
 	public Grid getGrid() {
 		return this.grid;
 	}
 
-	private void rotateRight() {
-		this.orientation = this.orientation.rotateRight();		
+	private void rotateRight() throws NullGridException {
+		if(this.grid == null)
+			throw new NullGridException();
+		this.grid.rotateRight(this);	
 	}
 
-	private void rotateLeft() {
-		this.orientation = this.orientation.rotateLeft();		
+	private void rotateLeft() throws NullGridException {
+		if(this.grid == null)
+			throw new NullGridException();
+		this.grid.rotateLeft(this);		
 	}
 	
 	private void moveForward() throws MowerException{
 		if(this.grid == null)
 			throw new NullGridException();
-		if(this.getOrientation().getIdentifier() == "N") {
-			this.grid.moveForward(this,(p) -> new Position(p.getX(),p.getY() + 1));
-		}else if(this.getOrientation().getIdentifier() == "E") {
-			this.grid.moveForward(this,(p) -> new Position(p.getX() + 1,p.getY()));
-		}else if(this.getOrientation().getIdentifier() == "S") {
-			this.grid.moveForward(this,(p) -> new Position(p.getX(),p.getY() - 1));
-		}else if(this.getOrientation().getIdentifier() == "W") {
-			this.grid.moveForward(this,(p) -> new Position(p.getX() - 1,p.getY()));
-		}			
+		this.grid.moveForward(this);			
 	}
 	
 	public void executeOne() throws MowerException {

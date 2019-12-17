@@ -12,7 +12,7 @@ import main.InputParser;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
 import main.model.Command;
-import main.model.orientation.NorthOrientation;
+import main.model.Orientation;
 
 @RunWith(Suite.class)
 @SuiteClasses({})
@@ -30,7 +30,7 @@ class InputParserTest {
 	
 	@Test
 	void mowerWithValidOrientationTest() throws InvalidOrientationException{
-		assertEquals(InputParser.parseOrientation("N").getIdentifier(),new NorthOrientation().getIdentifier());
+		assertEquals(InputParser.parseOrientation("N"),Orientation.NORTH);
 	}
 		
 	@Test

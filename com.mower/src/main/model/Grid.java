@@ -1,10 +1,7 @@
 package main.model;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.function.Function;
-
 import main.exception.grid.GridException;
 import main.exception.grid.MowerOutOfRangeException;
 import main.exception.grid.NegativeGridException;
@@ -15,6 +12,7 @@ public class Grid {
 	
 	private Position gridLimit;
 	private HashMap<Mower,Position> mowerPositions;
+	private HashMap<Mower,Orientation> mowerOrientations;
 	private LinkedList<Mower> mowers;
 	private Mower currentMower;
 	private HashMap<Position,Boolean> positions;
@@ -25,6 +23,7 @@ public class Grid {
 		}
 		gridLimit = new Position(x,y);
 		this.mowerPositions = new HashMap<Mower,Position>();
+		this.mowerOrientations = new HashMap<Mower, Orientation>();
 		this.mowers = new LinkedList<Mower>();
 		this.currentMower = null;
 		this.positions = new HashMap<Position, Boolean>();
@@ -34,16 +33,15 @@ public class Grid {
 		return this.gridLimit;
 	}
 
-	public void placeMower(int mowerX, int mowerY, Mower mower) throws GridException, MowerException {		
-		if(mowerX > gridLimit.getX() || mowerY > gridLimit.getY() || mowerX < 0 || mowerY < 0 )
+	public void placeMower(Position position, Orientation orientation, Mower mower) throws GridException, MowerException {		
+		if(position.getX() > gridLimit.getX() || position.getY() > gridLimit.getY() || position.getX() < 0 || position.getY() < 0 )
 			throw new MowerOutOfRangeException();
-		
-		Position position = new Position(mowerX,mowerY);
-		
+				
 		if(positions.containsKey(position) && positions.get(position))
 			throw new PositionTakenException();
 		positions.put(position,true);
 		mowerPositions.put(mower,position);
+		mowerOrientations.put(mower, orientation);
 		mowers.add(mower);
 		
 		
@@ -53,26 +51,40 @@ public class Grid {
 		mower.setGrid(this);		
 	}
 	
-	public void moveForward(Mower mower, Function<Position, Position> fn){
+	public void moveForward(Mower mower) {		
 		Position currentPosition = this.getMowerPosition(mower);
-		Position wantedPosition = fn.apply(currentPosition);
+		Position wantedPosition = currentPosition;
+		Orientation orientation = getMowerOrientation(mower);
+		if(orientation == Orientation.NORTH) {
+			wantedPosition = new Position(currentPosition.getX(),currentPosition.getY() + 1);
+		}else if(orientation == Orientation.EAST) {
+			wantedPosition = new Position(currentPosition.getX() + 1,currentPosition.getY());
+		}else if(orientation == Orientation.SOUTH) {
+			wantedPosition = new Position(currentPosition.getX(),currentPosition.getY() - 1);
+		}else if(orientation == Orientation.WEST) {
+			wantedPosition = new Position(currentPosition.getX() - 1,currentPosition.getY());
+		}
 		if(wantedPosition.getX() >= 0 &&  wantedPosition.getY() >= 0 
 				&& wantedPosition.getX() <= gridLimit.getX() && wantedPosition.getY() <= gridLimit.getY() &&
 				(!positions.containsKey(wantedPosition)|| !positions.get(wantedPosition))) {
 			positions.put(currentPosition,false);
 			mowerPositions.put(mower, wantedPosition);
 			positions.put(wantedPosition,true);
-		}
+		}		
 	}
 
-	private Position getMowerPosition(Mower mower){
+	public Position getMowerPosition(Mower mower){
 		return mowerPositions.get(mower);
+	}
+	
+	public Orientation getMowerOrientation(Mower mower){
+		return mowerOrientations.get(mower);
 	}
 
 	private void printMower() {
 		if(currentMower != null) {
 			Position currentPosition = this.getMowerPosition(currentMower);
-			System.out.println(currentPosition.getX() + " " + currentPosition.getY() + " " + currentMower.getOrientation().getIdentifier());
+			System.out.println(currentPosition.getX() + " " + currentPosition.getY() + " " + OrientationHelper.getIdentifier(mowerOrientations.get(currentMower)));
 		}		
 	}
 
@@ -135,5 +147,15 @@ public class Grid {
 		if (!positions.equals(other.positions))
 			return false;
 		return true;
+	}
+
+	public void rotateRight(Mower mower) {
+		mowerOrientations.put(mower,OrientationHelper.rotateRight(getMowerOrientation(mower)));
+		
+	}
+	
+	public void rotateLeft(Mower mower) {
+		mowerOrientations.put(mower,OrientationHelper.rotateLeft(getMowerOrientation(mower)));
+		
 	}
 }

@@ -6,7 +6,8 @@ import main.exception.mower.MowerException;
 import main.model.Command;
 import main.model.Grid;
 import main.model.Mower;
-import main.model.orientation.NorthOrientation;
+import main.model.Orientation;
+import main.model.Position;
 
 public class TestInstances {
 
@@ -22,7 +23,7 @@ public class TestInstances {
 		Grid grid = new Grid(4,4);
 		LinkedList<Command> q = new LinkedList<Command>();
 		q.add(command);
-		grid.placeMower(0, 0,new Mower(new NorthOrientation(), q));
+		grid.placeMower(new Position(0, 0),Orientation.NORTH,new Mower(q));
 		return grid;
 	}
 	
@@ -34,6 +35,6 @@ public class TestInstances {
 		q.add(command);
 		q.add(command);
 		
-		return new Mower(new NorthOrientation(), q);		
+		return new Mower(q);		
 	}
 }

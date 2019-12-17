@@ -6,6 +6,7 @@ import main.exception.grid.GridException;
 import main.exception.mower.MowerException;
 import main.model.Grid;
 import main.model.Mower;
+import main.model.Position;
 
 public class Main {
 	
@@ -22,7 +23,7 @@ public class Main {
 			line =  s.nextLine().split(" ");
 			commands =  s.nextLine();
 			
-			grid.placeMower(Integer.parseInt(line[0]),Integer.parseInt(line[1]),new Mower(InputParser.parseOrientation(line[2]), InputParser.parseCommands(commands)));			
+			grid.placeMower(new Position(Integer.parseInt(line[0]),Integer.parseInt(line[1])),InputParser.parseOrientation(line[2]),new Mower(InputParser.parseCommands(commands)));			
 		}
 		s.close();
 		grid.executeAll();		

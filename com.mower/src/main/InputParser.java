@@ -4,23 +4,18 @@ import java.util.LinkedList;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
 import main.model.Command;
-import main.model.orientation.EastOrientation;
-import main.model.orientation.NorthOrientation;
-import main.model.orientation.Orientable;
-import main.model.orientation.SouthOrientation;
-import main.model.orientation.WestOrientation;
-
+import main.model.Orientation;
 public class InputParser {
 	
-	public static Orientable parseOrientation(String orientation) throws InvalidOrientationException{
+	public static Orientation parseOrientation(String orientation) throws InvalidOrientationException{
 		if(orientation.equals("N")) {
-			return new NorthOrientation();
+			return Orientation.NORTH;
 		}else if(orientation.equals("E")) {
-			return new EastOrientation();
+			return Orientation.EAST;
 		}else if(orientation.equals("W")) {
-			return new WestOrientation();
+			return Orientation.WEST;
 		}else if(orientation.equals("S")) {
-			return new SouthOrientation();
+			return Orientation.SOUTH;
 		}else {
 			throw new InvalidOrientationException();
 		}
