@@ -1,6 +1,9 @@
 package main.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
@@ -21,14 +24,14 @@ public class Mower {
 	}
 	
 	private Orientable orientation;
-	private ArrayList<Command> commands;
-	private int currentCommand;
+	private Queue<Command> commands;
+	private Command currentCommand;
 	private Grid grid;
 	
 
 	public Mower(String orientation, String commands) throws MowerException{
 		this.grid = null;
-		this.currentCommand = -1;
+		this.currentCommand = null;
 		parseOrientation(orientation);
 		parseCommands(commands);		
 	}
@@ -40,7 +43,7 @@ public class Mower {
 	}
 	
 	private void parseCommands(String commands) throws InvalidCommandException{
-		this.commands = new ArrayList<Command>();
+		this.commands = new PriorityQueue<Command>();
 		for(int i = 0; i < commands.length(); i++) {
 			if(commands.charAt(i) == 'F') {
 				this.commands.add(Command.FORWARD);
@@ -52,8 +55,7 @@ public class Mower {
 				throw new InvalidCommandException();
 			}			
 		}
-		if(!commands.isEmpty())
-			this.currentCommand = 0;		
+		this.currentCommand = this.commands.poll();		
 	}
 	
 	private void parseOrientation(String orientation) throws InvalidOrientationException{
@@ -101,29 +103,27 @@ public class Mower {
 	}
 	
 	public void executeOne() throws MowerException {
-		if(this.currentCommand == -1)
+		if(this.currentCommand == null)
 			throw new InvalidCommandException();
-		if(this.commands.get(currentCommand) == Command.LEFT) {
+		if(this.currentCommand == Command.LEFT) {
 			this.rotateLeft();
-		}else if(this.commands.get(currentCommand) == Command.RIGHT) {
+		}else if(this.currentCommand == Command.RIGHT) {
 			this.rotateRight();
-		}else if(this.commands.get(currentCommand) == Command.FORWARD) {
+		}else if(this.currentCommand == Command.FORWARD) {
 			this.moveForward();
 		}else {
 			throw new InvalidCommandException();
 		}
-		this.currentCommand++;
-		if(currentCommand == commands.size()) {
-			currentCommand = -1;
-		if(this.grid == null)
-			throw new NullGridException();
-			
-			this.grid.printMower(this);
-		}
+
+		this.currentCommand = this.commands.poll();						
+	}
+	
+	public boolean hasCommand() {
+		return this.currentCommand != null;
 	}
 	
 	public void executeAll() throws MowerException {
-		while(this.currentCommand != -1)
+		while(this.currentCommand != null)
 			this.executeOne();
 	}
 

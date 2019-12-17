@@ -8,6 +8,7 @@ import main.exception.grid.GridException;
 import main.exception.mower.InvalidCommandException;
 import main.exception.mower.InvalidOrientationException;
 import main.exception.mower.MowerException;
+import main.exception.mower.NullGridException;
 import main.model.Mower;
 import main.model.orientation.EastOrientation;
 import main.model.orientation.NorthOrientation;
@@ -90,7 +91,7 @@ class MowerTest {
 			Mower mower = new Mower("N", "F");
 			mower.executeOne();	
 			fail("No exception was thrown");
-		}catch(InvalidCommandException e) {
+		}catch(NullGridException e) {
 			
 		}
 	}
@@ -104,9 +105,5 @@ class MowerTest {
 		}catch(InvalidCommandException e) {
 			
 		}
-	}
-	
-	
-	
-
+	}	
 }

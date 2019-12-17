@@ -38,5 +38,4 @@ public class Position {
 			return false;
 		return true;
 	}
-
 }
