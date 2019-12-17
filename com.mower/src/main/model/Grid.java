@@ -1,12 +1,13 @@
-package main;
+package main.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import main.exception.GridException;
-import main.exception.MowerOutOfRangeException;
-import main.exception.NegativeGridException;
-import main.exception.PositionTakenException;
+import main.exception.grid.GridException;
+import main.exception.grid.MowerOutOfRangeException;
+import main.exception.grid.NegativeGridException;
+import main.exception.grid.PositionTakenException;
+import main.exception.mower.MowerException;
 
 public class Grid {
 	
@@ -29,7 +30,7 @@ public class Grid {
 		return this.gridLimit;
 	}
 
-	public void placeMower(int mowerX, int mowerY, String orientation, String commands) throws GridException {
+	public void placeMower(int mowerX, int mowerY, Mower mower) throws GridException, MowerException {
 		
 		if(mowerX > gridLimit.getX() || mowerY > gridLimit.getY() ||
 				0 > gridLimit.getX() || 0 > gridLimit.getY() )
@@ -40,7 +41,6 @@ public class Grid {
 		if(takenPositions.containsKey(position))
 			throw new PositionTakenException();
 		
-		Mower mower = new Mower(position, orientation, commands);
 		mowers.add(mower);
 		takenPositions.put(position, mower);
 		

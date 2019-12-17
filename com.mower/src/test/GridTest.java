@@ -4,16 +4,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import main.Grid;
-import main.exception.GridException;
-import main.exception.NegativeGridException;
-import main.exception.PositionTakenException;
+import main.exception.grid.GridException;
+import main.exception.grid.NegativeGridException;
+import main.exception.grid.PositionTakenException;
+import main.exception.mower.MowerException;
+import main.model.Grid;
+import main.model.Mower;
 
 
 class GridTest {
 
 	@Test
-	void NegativeGridShouldFailTest() throws GridException{
+	void negativeGridShouldFailTest() throws GridException{
 		try {
 			@SuppressWarnings("unused")
 			Grid grid = new Grid(-1,4);
@@ -23,31 +25,31 @@ class GridTest {
 	}
 	
 	@Test
-	void PositiveGridShouldNotFailTest() throws GridException {
+	void positiveGridShouldNotFailTest() throws GridException {
 		Grid grid = new Grid(1,4);
 		assertEquals(grid.getLimit().getX(),1);
 		assertEquals(grid.getLimit().getY(),4);
 	}
 	
 	@Test
-	void InsertMowerInEmptyGridTest() throws GridException{
+	void insertMowerInEmptyGridTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0, "N", "");		
+		grid.placeMower(0, 0,new Mower( "N", "",grid));		
 	}
 	
 	@Test
-	void InsertTwoMowersTest() throws GridException{
+	void insertTwoMowersTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0, "N", "");	
-		grid.placeMower(0, 1, "N", "");				
+		grid.placeMower(0, 0,new Mower( "N", "",grid));	
+		grid.placeMower(0, 1,new Mower( "N", "",grid));				
 	}
 	
 	@Test
-	void InsertTwoMowersInSamePositionTest() throws GridException{
+	void InsertTwoMowersInSamePositionTest() throws GridException, MowerException{
 		Grid grid = new Grid(4,4);
-		grid.placeMower(0, 0, "N", "");
+		grid.placeMower(0, 0,new Mower( "N", "",grid));	
 		try {
-			grid.placeMower(0, 0, "N", "");	
+			grid.placeMower(0, 0,new Mower( "N", "",grid));	
 			fail("Cannot place two mowers in the same position");
 		}catch(PositionTakenException e) {
 			

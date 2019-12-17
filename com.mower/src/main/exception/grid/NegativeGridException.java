@@ -1,4 +1,4 @@
-package main.exception;
+package main.exception.grid;
 
 public class NegativeGridException extends GridException {
 
