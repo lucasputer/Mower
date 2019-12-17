@@ -1,4 +1,6 @@
-package main.model;
+package main.helper;
+
+import main.model.Orientation;
 
 public class OrientationHelper{
 	public static Orientation rotateRight(Orientation orientation) {

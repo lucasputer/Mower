@@ -7,6 +7,7 @@ import main.exception.grid.MowerOutOfRangeException;
 import main.exception.grid.NegativeGridException;
 import main.exception.grid.PositionTakenException;
 import main.exception.mower.MowerException;
+import main.helper.OrientationHelper;
 
 public class Grid {
 	
